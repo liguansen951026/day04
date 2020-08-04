@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoshu.dao.ContentMapper">
+  <resultMap id="BaseResultMap" type="com.xiaoshu.entity.Content">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="contentId" jdbcType="INTEGER" property="contentid" />
+    <result column="contentCategoryId" jdbcType="INTEGER" property="contentcategoryid" />
+    <result column="contenttitle" jdbcType="VARCHAR" property="contenttitle" />
+    <result column="contenturl" jdbcType="VARCHAR" property="contenturl" />
+    <result column="picpath" jdbcType="VARCHAR" property="picpath" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createtime" jdbcType="DATE" property="createtime" />
+  </resultMap>
+  <resultMap id="BaseMap" type="com.xiaoshu.entity.Content">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="contentId" jdbcType="INTEGER" property="contentid" />
+    <result column="contentCategoryId" jdbcType="INTEGER" property="contentcategoryid" />
+    <result column="contenttitle" jdbcType="VARCHAR" property="contenttitle" />
+    <result column="contenturl" jdbcType="VARCHAR" property="contenturl" />
+    <result column="picpath" jdbcType="VARCHAR" property="picpath" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="createtime" jdbcType="DATE" property="createtime" />
+    <association property="contentCategory" javaType="contentCategory">
+    	<id column="contentCategoryId" jdbcType="INTEGER" property="contentcategoryid" />
+	    <result column="categoryname" jdbcType="VARCHAR" property="categoryname" />
+	    <result column="status" jdbcType="VARCHAR" property="status" />
+	    <result column="createtime" jdbcType="DATE" property="createtime" />
+    </association>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    contentId, contentCategoryId, contenttitle, contenturl, picpath, price, status, createtime
+  </sql>
+<select id="findAll" parameterType="content" resultMap="BaseMap">
+	SELECT * FROM `content` a,`contentcategory` b WHERE a.`contentCategoryId`=b.`contentCategoryId`
+	<if test="contenttitle!=null and contenttitle!=''">
+		and contenttitle like '%${contenttitle}%'
+	</if>
+	<if test="contentcategoryid!=0 and contentcategoryid!=null">
+		and a.contentcategoryid=#{contentcategoryid}
+	</if>
+</select>
+<select id="findByName" parameterType="string" resultType="content">
+	select * from content where contenttitle=#{contentName}
+</select>
+<insert id="addContent" parameterType="content">
+	insert into content(contentCategoryId,contenttitle,contenturl,picpath,price,status,createtime) 
+	values(#{contentcategoryid},#{contenttitle},#{contenturl},#{picpath},#{price},#{status},#{createtime})
+</insert>
+<select id="countContent" resultType="CountVo">
+	SELECT b.`categoryname`,COUNT(a.`contentId`) num FROM `content` a 
+RIGHT JOIN `contentcategory` b 
+ON a.`contentCategoryId`=b.`contentCategoryId` 
+GROUP BY b.`categoryname`
+</select>
+</mapper>
